@@ -1,2 +1,2 @@
-# python-markdown-variables
+# pymdvar
 Python's Markdown extension to insert variables
