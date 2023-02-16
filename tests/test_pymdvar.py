@@ -4,10 +4,8 @@ from pymdvar import VariableExtension
 
 
 def test_empty_input():
-    in_str = ''
-    out_str = markdown(in_str, extensions=[VariableExtension()])
-    print(in_str)
-    print(out_str)
+    in_str: str = ''
+    out_str: str = markdown(in_str, extensions=[VariableExtension()])
     assert in_str == out_str
 
 
@@ -20,7 +18,7 @@ def test_empty_input():
     ('foo **$test}** bar', '<p>foo <strong>$test}</strong> bar</p>'),
 ])
 def test_non_replacements(in_str, exp_str):
-    out_str = markdown(in_str, extensions=[VariableExtension()])
+    out_str: str = markdown(in_str, extensions=[VariableExtension()])
     assert out_str == exp_str
 
 
@@ -32,6 +30,6 @@ def test_non_replacements(in_str, exp_str):
     ('foo ![image](${test}/a.jpg) bar', '<p>foo <img alt="image" src="value/a.jpg" /> bar</p>'),
 ])
 def test_simple_replacements(in_str, exp_str):
-    out_str = markdown(in_str, extensions=[VariableExtension(variables={'test':'value'})])
+    out_str: str = markdown(in_str, extensions=[VariableExtension(variables={'test':'value'})])
     assert out_str == exp_str
 
