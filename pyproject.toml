@@ -7,6 +7,9 @@ addopts = "--cov-report term-missing --cov=pymdvar"
 testpaths = [
     "tests",
 ]
+env = [
+    "PYMDVAR_TEST_1=1"
+]
 
 [tool.mypy]
 mypy_path = "src"

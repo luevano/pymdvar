@@ -1,4 +1,4 @@
-from os import getenv
+import os
 from re import Match
 from typing import Any
 from xml.etree.ElementTree import Element
@@ -6,7 +6,7 @@ from markdown import Markdown
 from markdown.extensions import Extension
 from markdown.inlinepatterns import Pattern
 
-VAR_RE: str = r'(\$\{)([a-zA-Z_]*)(\})'
+VAR_RE: str = r'(\$\{)([a-zA-Z_0-9]*)(\})'
 
 
 class VarPattern(Pattern):
@@ -22,14 +22,12 @@ class VarPattern(Pattern):
     def handleMatch(self, m: Match[str]) -> str | Element | None:
         # for some reason the group is offest by 1
         var: str | Any = m.group(3)
-        value: str = ''
-
         if var in self.vars:
-            value = self.vars[var]
-        else:
-            if self.enable_env:
-                value = getenv(var, '')
-        return value
+            return self.vars[var]
+        if self.enable_env:
+            if var in os.environ:
+                return os.environ[var]
+        return ''
 
 
 class VariableExtension(Extension):
@@ -41,11 +39,7 @@ class VariableExtension(Extension):
         super().__init__(**kwargs)
 
     def extendMarkdown(self, md: Markdown) -> None:
-        vars: dict[str, str] | Any = self.getConfig('variables', dict())
-        enable_env: bool = self.getConfig('enable_env', False)
+        vars: dict[str, str] | Any = self.getConfig('variables')
+        enable_env: bool = self.getConfig('enable_env')
         var_pattern: VarPattern = VarPattern(VAR_RE, vars, enable_env)
         md.inlinePatterns.register(var_pattern, 'variable', 175)
-
-
-def makeExtension(*args: Any, **kwargs: Any):
-    return VariableExtension(*args, **kwargs)
